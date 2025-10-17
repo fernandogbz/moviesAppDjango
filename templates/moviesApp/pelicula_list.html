@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Películas - Movies App{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-camera-reels"></i> Catálogo de Películas</h1>
+        {% if user.is_staff %}
+            <a href="{% url 'pelicula_create' %}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Nueva Película
+            </a>
+        {% endif %}
+    </div>
+    
+    <!-- Filtros -->
+    <div class="card filters-card mb-4">
+        <form method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Buscar por título</label>
+                    {{ form.titulo }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Género</label>
+                    {{ form.genero }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Director</label>
+                    {{ form.director }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Año desde</label>
+                    {{ form.año_desde }}
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Año hasta</label>
+                    {{ form.año_hasta }}
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Botón de exportar para admin -->
+    {% if user.is_staff %}
+        <div class="text-end mb-3">
+            <a href="{% url 'export_peliculas' %}" class="btn btn-success">
+                <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+            </a>
+        </div>
+    {% endif %}
+    
+    <!-- Lista de películas -->
+    {% if page_obj.object_list %}
+        <div class="row">
+            {% for pelicula in page_obj %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card movie-card h-100">
+                        {% if pelicula.poster %}
+                            <img src="{{ pelicula.poster.url }}" class="card-img-top movie-poster" alt="{{ pelicula.titulo }}">
+                        {% else %}
+                            <div class="card-img-placeholder">
+                                <i class="bi bi-camera-reels"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ pelicula.titulo }}</h5>
+                            <p class="card-text flex-grow-1">{{ pelicula.descripcion|truncatewords:15 }}</p>
+                            
+                            <!-- Géneros -->
+                            <div class="mb-2">
+                                {% for genero in pelicula.generos.all %}
+                                    <span class="badge bg-secondary me-1">{{ genero.nombre }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Rating y año -->
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="rating-display">
+                                    {% if pelicula.get_average_rating > 0 %}
+                                        <i class="bi bi-star-fill rating-stars"></i> {{ pelicula.get_average_rating|floatformat:1 }}
+                                        <small class="text-muted">({{ pelicula.get_total_reviews }})</small>
+                                    {% else %}
+                                        <span class="text-muted">Sin calificación</span>
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted">{{ pelicula.fechaEstreno.year }}</small>
+                            </div>
+                            
+                            <!-- Botones -->
+                            <div class="mt-auto">
+                                <a href="{% url 'pelicula_detail' pelicula.pk %}" class="btn btn-primary w-100 mb-2">
+                                    <i class="bi bi-eye"></i> Ver Detalles
+                                </a>
+                                
+                                {% if user.is_staff %}
+                                    <div class="btn-group w-100">
+                                        <a href="{% url 'pelicula_edit' pelicula.pk %}" class="btn btn-outline-warning btn-sm">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <form method="post" action="{% url 'pelicula_delete' pelicula.pk %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-sm btn-delete" 
+                                                    data-item-name="{{ pelicula.titulo }}">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Paginación -->
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Paginación de películas">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">&laquo; Primera</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Anterior</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                    </li>
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Siguiente</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Última &raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-search display-1 text-muted"></i>
+            <h3 class="mt-3">No se encontraron películas</h3>
+            <p class="text-muted">Intenta ajustar los filtros de búsqueda.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

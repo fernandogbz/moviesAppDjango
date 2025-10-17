@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Reseñas - Movies App{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-star"></i> Todas las Reseñas</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    {% if page_obj %}
+                        <div class="row">
+                            {% for reseña in page_obj %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <strong>{{ reseña.pelicula.titulo }}</strong>
+                                        <span class="badge bg-warning text-dark">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= reseña.calificacion %}
+                                                    <i class="bi bi-star-fill"></i>
+                                                {% else %}
+                                                    <i class="bi bi-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">{{ reseña.comentario }}</p>
+                                        <hr>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                <i class="bi bi-person"></i> {{ reseña.usuario.username }}
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="bi bi-calendar"></i> {{ reseña.fecha }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Paginación -->
+                        {% if page_obj.has_other_pages %}
+                        <nav aria-label="Paginación de reseñas">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">&laquo; Primera</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                                </li>
+                                {% endif %}
+
+                                <li class="page-item active">
+                                    <span class="page-link">
+                                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                                    </span>
+                                </li>
+
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-star text-muted" style="font-size: 4rem;"></i>
+                            <h4 class="text-muted mt-3">No hay reseñas registradas</h4>
+                            <p class="text-muted">Las reseñas aparecerán aquí cuando los usuarios las escriban</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

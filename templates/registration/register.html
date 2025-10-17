@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrarse - Movies App{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h4><i class="bi bi-person-plus"></i> Crear Cuenta</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.first_name.id_for_label }}" class="form-label">Nombre</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                        {{ form.first_name }}
+                                    </div>
+                                    {% if form.first_name.errors %}
+                                        <div class="text-danger mt-1">
+                                            {% for error in form.first_name.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Apellido</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                        {{ form.last_name }}
+                                    </div>
+                                    {% if form.last_name.errors %}
+                                        <div class="text-danger mt-1">
+                                            {% for error in form.last_name.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label">Usuario</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-at"></i></span>
+                                {{ form.username }}
+                            </div>
+                            {% if form.username.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.username.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                {{ form.email }}
+                            </div>
+                            {% if form.email.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.email.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.password1.id_for_label }}" class="form-label">Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                        {{ form.password1 }}
+                                    </div>
+                                    {% if form.password1.errors %}
+                                        <div class="text-danger mt-1">
+                                            {% for error in form.password1.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.password2.id_for_label }}" class="form-label">Confirmar Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                        {{ form.password2 }}
+                                    </div>
+                                    {% if form.password2.errors %}
+                                        <div class="text-danger mt-1">
+                                            {% for error in form.password2.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-person-plus"></i> Crear Cuenta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="mb-0">¿Ya tienes cuenta? <a href="{% url 'login' %}" class="text-decoration-none">Iniciar sesión aquí</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
