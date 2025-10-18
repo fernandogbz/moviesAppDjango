@@ -62,7 +62,7 @@ Sigue estos pasos para configurar el proyecto localmente.
 
 ```bash
 git clone https://github.com/fernandogbz/moviesAppDjango.git
-cd ev2-Jimenez
+cd moviesAppDjango
 ```
 
 **Entorno virtual e instalación de dependencias**
