@@ -104,4 +104,3 @@ python manage.py createsuperuser
 python manage.py runserver
 # Abrir http://127.0.0.1:8000/
 ```
-
